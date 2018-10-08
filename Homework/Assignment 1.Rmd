@@ -1,0 +1,146 @@
+---
+title: "Assignment 1"
+author: "Ruixuan Ma"
+date: "10/7/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Bootstrap Assignment 1: Due Sunday, 7 October at 23:59PM
+*For help with Rmarkdown for reports, see this [white paper](http://www.stat.cmu.edu/~cshalizi/rmarkdown/#math-in-r-markdown) from Carnegie Mellon University's Department of Statistics and Data Science.*
+
+### Part 1
+Create a new GitHub repository called `BST650_Bootstrap`. Connect your computer to this repository. Create a `ReadMe.Rmd` file for this repository.
+
+### Part 2
+Create an Rmarkdown file called "Assignment1.Rmd". In this report:
+
+1. Work through this lesson on functions: https://swcarpentry.github.io/r-novice-inflammation/02-func-R/
+2. Create a function called `bootstrap()` that modifies the behaviour of the `sample()` function to perform a bootstrap sample on a given vector. Remember that bootstrap samples are the same **length** as the original sample, and remember that these samples are taken **with replacement** (*hint, hint*).
+```{r}
+dat <- read.csv(file = "/Users/maruixuan/Documents/Documents/GitHub/BST650_Bootstrap/inflammation-01.csv", header = FALSE)
+bootstrap<-function(dat){sample(dat,40,replace=TRUE)}
+```
+3. Create the following vector: `grades = c(92, 80, 85, 95, 97, 78, 90, 86, 88, 66, 70, 82)`. Find the five-number summary, mean, and standard deviation of `grades`.
+```{r}
+grades <- c(92, 80, 85, 95, 97, 78, 90, 86, 88, 66, 70, 82)
+summary(grades)
+mean(grades)
+sqrt(var(grades))
+```
+3. Call your function 10 times on `grades`. Store each bootstrapped sample as `boot1`, `boot2`, ..., `boot10`.
+```{r}
+boot1 <- c(bootstrap(grades))
+boot2 <- c(bootstrap(grades))
+boot3 <- c(bootstrap(grades))
+boot4 <- c(bootstrap(grades))
+boot5 <- c(bootstrap(grades))
+boot6 <- c(bootstrap(grades))
+boot7 <- c(bootstrap(grades))
+boot8 <- c(bootstrap(grades))
+boot9 <- c(bootstrap(grades))
+boot10 <- c(bootstrap(grades))
+```
+4. Find the five-number summary, mean, and standard deviation of each bootstrap sample.
+
+# For Boot1:
+```{r}
+summary(boot1)
+mean(boot1)
+sqrt(var(boot1))
+```
+# For Boot2:
+```{r}
+summary(boot2)
+mean(boot2)
+sqrt(var(boot2))
+```
+# For Boot3:
+```{r}
+summary(boot3)
+mean(boot3)
+sqrt(var(boot3))
+```
+# For Boot4:
+```{r}
+summary(boot4)
+mean(boot4)
+sqrt(var(boot4))
+```
+# For Boot5:
+```{r}
+summary(boot5)
+mean(boot5)
+sqrt(var(boot5))
+```
+# For Boot6:
+```{r}
+summary(boot6)
+mean(boot6)
+sqrt(var(boot6))
+```
+# For Boot7:
+```{r}
+summary(boot7)
+mean(boot7)
+sqrt(var(boot7))
+```
+# For Boot8:
+```{r}
+summary(boot8)
+mean(boot8)
+sqrt(var(boot8))
+```
+# For Boot9:
+```{r}
+summary(boot9)
+mean(boot9)
+sqrt(var(boot9))
+```
+# For Boot10:
+```{r}
+summary(boot10)
+mean(boot10)
+sqrt(var(boot10))
+```
+5. Create a data frame of these summary statistics (10 rows and seven columns).
+```{r}
+Boots <- data.frame(
+BootID = c("boot1", "boot2", "boot3", "boot4", "boot5", "boot6", "boot7", "boot8", "boot9", "boot10"), 
+Minimum = c(summary(boot1)[1], summary(boot2)[1], summary(boot3)[1], summary(boot4)[1],summary(boot5)[1], summary(boot6)[1], summary(boot7)[1], summary(boot8)[1], summary(boot9)[1], summary(boot10)[1]),
+FirstQuantile = c(summary(boot1)[2], summary(boot2)[2], summary(boot3)[2], summary(boot4)[2],summary(boot5)[2], summary(boot6)[2], summary(boot7)[2], summary(boot8)[2], summary(boot9)[2], summary(boot10)[2]),
+Median = c(summary(boot1)[3], summary(boot2)[3], summary(boot3)[3], summary(boot4)[3],summary(boot5)[3], summary(boot6)[3], summary(boot7)[3], summary(boot8)[3], summary(boot9)[3], summary(boot10)[3]),
+Mean = c(summary(boot1)[4], summary(boot2)[4], summary(boot3)[4], summary(boot4)[4],summary(boot5)[4], summary(boot6)[4], summary(boot7)[4], summary(boot8)[4], summary(boot9)[4], summary(boot10)[4]),
+ThirdQuantile = c(summary(boot1)[5], summary(boot2)[5], summary(boot3)[5], summary(boot4)[5],summary(boot5)[5], summary(boot6)[5], summary(boot7)[5], summary(boot8)[5], summary(boot9)[5], summary(boot10)[5]),
+Maximum = c(summary(boot1)[6], summary(boot2)[6], summary(boot3)[6], summary(boot4)[6],summary(boot5)[6], summary(boot6)[6], summary(boot7)[6], summary(boot8)[6], summary(boot9)[6], summary(boot10)[6]),
+StandardDeviation = c(sd(boot1), sd(boot2), sd(boot3), sd(boot4), sd(boot5), sd(boot6), sd(boot7), sd(boot8), sd(boot9), sd(boot10)),
+stringsAsFactors = FALSE
+)
+```
+6. Find the bootstrap estimate of each element of the five-number summary, mean, and standard deviation (look at the formula in your notes, then look at the `?colMeans` help file).
+```{r}
+bs_MeanOfMin <- colMeans(Boots[2])
+bs_MeanOfQ1 <- colMeans(Boots[3])
+bs_MeanOfQ2 <- colMeans(Boots[4])
+bs_MeanOfMean <- colMeans(Boots[5])
+bs_MeanOfQ3 <- colMeans(Boots[6])
+bs_MeanOfMax <- colMeans(Boots[7])
+bs_MeanOfSD <- colMeans(Boots[8])
+
+nminus1Boots <- 10-1
+
+bootMin1 <- ((Boots[c(1), c(2)]-bs_MeanOfMin)^2)/nminus1Boots
+bootMin2 <- ((Boots[c(2), c(2)]-bs_MeanOfMin)^2)/nminus1Boots
+bootMin3 <- ((Boots[c(3), c(2)]-bs_MeanOfMin)^2)/nminus1Boots
+bootMin4 <- ((Boots[c(4), c(2)]-bs_MeanOfMin)^2)/nminus1Boots
+bootMin5 <- ((Boots[c(5), c(2)]-bs_MeanOfMin)^2)/nminus1Boots
+bootMin6 <- ((Boots[c(6), c(2)]-bs_MeanOfMin)^2)/nminus1Boots
+bootMin7 <- ((Boots[c(7), c(2)]-bs_MeanOfMin)^2)/nminus1Boots
+bootMin8 <- ((Boots[c(8), c(2)]-bs_MeanOfMin)^2)/nminus1Boots
+bootMin9 <- ((Boots[c(9), c(2)]-bs_MeanOfMin)^2)/nminus1Boots
+bootMin10 <- ((Boots[c(10), c(2)]-bs_MeanOfMin))^2/nminus1Boots
+bootstrapMinSE <- bootMin1 + bootMin2 + bootMin3 + bootMin4 + bootMin5 + bootMin6 + bootMin7 + bootMin8 + bootMin9 + bootMin10
+```
