@@ -107,6 +107,10 @@ mean(covered_BMI50)
 ### Part 3
 Inspect the histograms or densities of the four above measurements of interest. Can you draw any conclusions about the coverage results you saw in Part 2 and the shapes of these four measurements?
 ```{r}
-# The coverage probability is the actual probability that the interval contains the true mean and it is ralated to alpha (1-alpha).
+hist(wcgs_df$arcus)
+hist(wcgs_df$height)
+hist((wcgs_df$ncigs))
+hist(wcgs_df$BMI)
+# For histogram of arcus and ncigs, they are not normal distributed. The ncigs is skewed to the right side and arcus just have 2 kind of values, which is 0 and 1. The histogram of height and BMI are normal distributed. The coverage probability is the actual probability that the interval contains the true mean and it is ralated to alpha (1-alpha).
 
 ```
