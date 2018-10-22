@@ -107,6 +107,6 @@ mean(covered_BMI50)
 ### Part 3
 Inspect the histograms or densities of the four above measurements of interest. Can you draw any conclusions about the coverage results you saw in Part 2 and the shapes of these four measurements?
 ```{r}
-# The coverage probability is the actual probability that the interval contains the true mean and it is ralated to alpha.
+# The coverage probability is the actual probability that the interval contains the true mean and it is ralated to alpha (1-alpha).
 
 ```

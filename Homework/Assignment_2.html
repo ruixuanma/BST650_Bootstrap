@@ -182,54 +182,54 @@ CheckCoverage(wcgs_df$BMI, 100)</code></pre>
 </ul>
 <pre class="r"><code>covered_arcus10 &lt;- replicate(10000, CheckCoverage(x= wcgs_df$arcus, n = 10))
 mean(covered_arcus10, na.rm = TRUE)</code></pre>
-<pre><code>## [1] 0.9895062</code></pre>
+<pre><code>## [1] 0.9906224</code></pre>
 <pre class="r"><code>covered_arcus30 &lt;- replicate(10000, CheckCoverage(x= wcgs_df$arcus, n = 30))
 mean(covered_arcus30)</code></pre>
-<pre><code>## [1] 0.9515</code></pre>
+<pre><code>## [1] 0.9547</code></pre>
 <pre class="r"><code>covered_arcus50 &lt;- replicate(10000, CheckCoverage(x= wcgs_df$arcus, n = 50))
 mean(covered_arcus50)</code></pre>
-<pre><code>## [1] 0.9473</code></pre>
+<pre><code>## [1] 0.9483</code></pre>
 <ul>
 <li><code>height</code></li>
 </ul>
 <pre class="r"><code>covered_height10 &lt;- replicate(10000, CheckCoverage(x= wcgs_df$height, n = 10))
 mean(covered_height10)</code></pre>
-<pre><code>## [1] 0.947</code></pre>
+<pre><code>## [1] 0.9524</code></pre>
 <pre class="r"><code>covered_height30 &lt;- replicate(10000, CheckCoverage(x= wcgs_df$height, n = 30))
 mean(covered_height30)</code></pre>
-<pre><code>## [1] 0.9512</code></pre>
+<pre><code>## [1] 0.9506</code></pre>
 <pre class="r"><code>covered_height50 &lt;- replicate(10000, CheckCoverage(x= wcgs_df$height, n = 50))
 mean(covered_height50)</code></pre>
-<pre><code>## [1] 0.9565</code></pre>
+<pre><code>## [1] 0.9468</code></pre>
 <ul>
 <li><code>ncigs</code></li>
 </ul>
 <pre class="r"><code>covered_ncigs10 &lt;- replicate(10000, CheckCoverage(x= wcgs_df$ncigs, n = 10))
 mean(covered_ncigs10, na.rm = TRUE)</code></pre>
-<pre><code>## [1] 0.926668</code></pre>
+<pre><code>## [1] 0.9264191</code></pre>
 <pre class="r"><code>covered_ncigs30 &lt;- replicate(10000, CheckCoverage(x= wcgs_df$ncigs, n = 30))
 mean(covered_ncigs30)</code></pre>
-<pre><code>## [1] 0.9474</code></pre>
+<pre><code>## [1] 0.9442</code></pre>
 <pre class="r"><code>covered_ncigs50 &lt;- replicate(10000, CheckCoverage(x= wcgs_df$ncigs, n = 50))
 mean(covered_ncigs50)</code></pre>
-<pre><code>## [1] 0.9472</code></pre>
+<pre><code>## [1] 0.95</code></pre>
 <ul>
 <li><code>BMI</code> (we calculated this column ourselves)</li>
 </ul>
 <pre class="r"><code>covered_BMI10 &lt;- replicate(10000, CheckCoverage(x= wcgs_df$BMI, n = 10))
 mean(covered_BMI10)</code></pre>
-<pre><code>## [1] 0.9499</code></pre>
+<pre><code>## [1] 0.9504</code></pre>
 <pre class="r"><code>covered_BMI30 &lt;- replicate(10000, CheckCoverage(x= wcgs_df$BMI, n = 30))
 mean(covered_BMI30)</code></pre>
-<pre><code>## [1] 0.9475</code></pre>
+<pre><code>## [1] 0.9488</code></pre>
 <pre class="r"><code>covered_BMI50 &lt;- replicate(10000, CheckCoverage(x= wcgs_df$BMI, n = 50))
 mean(covered_BMI50)</code></pre>
-<pre><code>## [1] 0.9505</code></pre>
+<pre><code>## [1] 0.9488</code></pre>
 </div>
 <div id="part-3" class="section level3">
 <h3>Part 3</h3>
 <p>Inspect the histograms or densities of the four above measurements of interest. Can you draw any conclusions about the coverage results you saw in Part 2 and the shapes of these four measurements?</p>
-<pre class="r"><code># The coverage probability is the actual probability that the interval contains the true mean and it is ralated to alpha.</code></pre>
+<pre class="r"><code># The coverage probability is the actual probability that the interval contains the true mean and it is ralated to alpha (1-alpha).</code></pre>
 </div>
 </div>
 
