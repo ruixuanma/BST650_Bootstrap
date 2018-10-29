@@ -1,0 +1,474 @@
+---
+title: "Assignment 3"
+author: "Ruixuan Ma"
+date: "10/28/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+df <- tibble::tibble(
+  a = rnorm(10),
+  b = rnorm(10),
+  c = rnorm(10),
+  d = rnorm(10)
+)
+
+df$a <- (df$a - min(df$a, na.rm = TRUE)) / 
+  (max(df$a, na.rm = TRUE) - min(df$a, na.rm = TRUE))
+df$b <- (df$b - min(df$b, na.rm = TRUE)) / 
+  (max(df$b, na.rm = TRUE) - min(df$a, na.rm = TRUE))
+df$c <- (df$c - min(df$c, na.rm = TRUE)) / 
+  (max(df$c, na.rm = TRUE) - min(df$c, na.rm = TRUE))
+df$d <- (df$d - min(df$d, na.rm = TRUE)) / 
+  (max(df$d, na.rm = TRUE) - min(df$d, na.rm = TRUE))
+
+(df$a - min(df$a, na.rm = TRUE)) /
+  (max(df$a, na.rm = TRUE) - min(df$a, na.rm = TRUE))
+
+x <- df$a
+(x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+
+rng <- range(x, na.rm = TRUE)
+(x - rng[1]) / (rng[2] - rng[1])
+
+rescale01 <- function(x) {
+  rng <- range(x, na.rm = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+}
+rescale01(c(0, 5, 10))
+rescale01(c(-10, 0, 10))
+rescale01(c(1, 2, 3, NA, 5))
+
+df$a <- rescale01(df$a)
+df$b <- rescale01(df$b)
+df$c <- rescale01(df$c)
+df$d <- rescale01(df$d)
+
+x <- c(1:10, Inf)
+rescale01(x)
+
+rescale01 <- function(x) {
+  rng <- range(x, na.rm = TRUE, finite = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+}
+
+rescale01(x)
+```
+###### practice ##########################################################################
+
+1. Why is TRUE not a parameter to rescale01()? What would happen if x contained a single missing value, and na.rm was FALSE?
+```{r}
+# Because TRUE is not a parameter but a default in function, and x is a parameter.
+
+rescale01 <- function(x) {
+  rng <- range(x, na.rm = FALSE)
+  (x - rng[1]) / (rng[2] - rng[1])
+  return(x)
+}
+rescale01(NA)
+# If na.rm = FALSE and there is any missing value in x, then the output would be NA.
+```
+
+2. In the second variant of rescale01(), infinite values are left unchanged. Rewrite rescale01() so that -Inf is mapped to 0, and Inf is mapped to 1.
+```{r}
+rescale01 <- function(x) {
+  rng <- range(x, na.rm = TRUE, finite = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+  #replace -inf with 0
+  x[x == -Inf] <- 0
+  #replace Inf with 1
+  x[x == Inf] <- 1
+  return(x)
+}
+
+rescale01(c(1,2,-Inf))
+rescale01(c(1,2,Inf))
+```
+
+3. Practice turning the following code snippets into functions. Think about what each function does. What would you call it? How many arguments does it need? Can you rewrite it to be more expressive or less duplicative?
+```{r}
+mean(is.na(x))
+
+x / sum(x, na.rm = TRUE)
+
+sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)
+
+meanX <- function(x){
+  return(mean(is.na(x)))
+}
+
+XoS <- function(x){
+  x / sum(x, na.rm = TRUE)
+}
+
+SDoM <- function(x){
+  return(sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE))
+}
+```
+
+4. Follow http://nicercode.github.io/intro/writing-functions.html to write your own functions to compute the variance and skew of a numeric vector.
+```{r}
+# For variance
+
+Variance <- function(x){
+  #difference from the mean
+  DifFromMean <- (x - mean(x, rm.na = TRUE))
+  #sum of squares
+  SumOfSquares <- sum(DifFromMean^2, rm.na = TRUE)
+  #return sample variance
+  return(SumOfSquares/(sum(!is.na(x)) - 1))
+}
+
+Variance(c(1,2,3,4))
+
+# For skewness
+
+Skewness <- function(x){
+  DifFromMean <- (x - mean(x, rm.na = TRUE))
+  third_moment <- sum(DifFromMean^3, na.rm = TRUE)
+  std_cubed <- sum(DifFromMean^2, na.rm = TRUE)^(3/2)/sqrt(sum(!is.na(x)))
+  return(third_moment/std_cubed)
+}
+
+Skewness(c(1,2,3,4,5))
+
+```
+5. Write both_na(), a function that takes two vectors of the same length and returns the number of positions that have an NA in both vectors.
+```{r}
+both_na <- function(x, y){
+  #get positions of NA
+  x <- is.na(x)
+  y <- is.na(y)
+  #return number of same positions that have NA 
+  return(sum(x & y))
+}
+
+```
+
+6. What do the following functions do? Why are they useful even though they are so short?
+```{r}
+is_directory <- function(x) file.info(x)$isdir
+is_readable <- function(x) file.access(x, 4) == 0
+# For the first one returns TRUE when x is a directory and FALSE if it is not. For the second one retuns TRUE when x is a readable file and FALSE when it is not. They are useful because the function name is interpretable and direct.
+```
+
+7. Read the complete lyrics to “Little Bunny Foo Foo”. There’s a lot of duplication in this song. Extend the initial piping example to recreate the complete song, and use functions to reduce the duplication.
+```{r}
+foofoo <- function(){
+  first <- "Little bunny Foo Foo\nHopping through the forest\nScooping up the field mice\nAnd bopping them on the head"
+  
+  second <-"Down came the Good Fairy, and she said\n\"Little bunny Foo Foo\nI don't want to see you\nScooping up the field mice\nAnd bopping them on the head.\""
+  cat(second)
+  
+  i <- 3
+  
+  while(i > 0){
+    word <- switch(i,
+                   'one',
+                   'two',
+                   'three'
+                   )
+    third <- paste0("I'll give you ", word, " chances,\nAnd if you don't behave, I will turn you into a goon!\"\nAnd the next day...")
+    cat(first, second, third, sep = "\n\n")
+    i <- i - 1
+  }
+  
+  final <- "I gave you three chances and you didn't behave so....\nPOOF. She turned him into a Goon."
+  
+  cat(first, second, final, sep = "\n\n")
+  
+}
+
+foofoo()
+```
+
+
+
+# Too short
+f()
+
+# Not a verb, or descriptive
+my_awesome_function()
+
+# Long, but clear
+impute_missing()
+collapse_years()
+
+# Never do this!
+col_mins <- function(x, y) {}
+rowMaxes <- function(y, x) {}
+
+# Good
+input_select()
+input_checkbox()
+input_text()
+
+# Not so good
+select_input()
+checkbox_input()
+text_input()
+
+# Don't do this!
+T <- FALSE
+c <- 10
+mean <- function(x) sum(x)
+
+
+
+###### exercise #########################################################################
+1. Read the source code for each of the following three functions, puzzle out what they do, and then brainstorm better names.
+
+f1 <- function(string, prefix) {
+  substr(string, 1, nchar(prefix)) == prefix
+}
+f2 <- function(x) {
+  if (length(x) <= 1) return(NULL)
+  x[-length(x)]
+}
+f3 <- function(x, y) {
+  rep(y, length.out = length(x))
+}
+
+```{r}
+# For the first one, it checks whether the word starts with a given prefix. So the name could be IsPrefix.
+IsPrefix <- function(string, prefix) {
+  substr(string, 1, nchar(prefix)) == prefix
+}
+
+# For the second function, it removes the last element of a vector. If the vector length is less than or equal to 1, then the function returns NULL. 
+RemoveLast <- function(x) {
+  if (length(x) <= 1) return(NULL)
+  x[-length(x)]
+}
+
+# For the third function, it repeats y and returns a vector of length x. 
+
+RepeatY <- function(x, y) {
+  rep(y, length.out = length(x))
+}
+```
+
+2. Take a function that you’ve written recently and spend 5 minutes brainstorming a better name for it and its arguments.
+```{r}
+CheckCoverage <- function(x, n, alpha = 0.05){
+  
+  # Step 0: Clean the Data
+  x <- x[!is.na(x)] # Remove missing values
+  
+  # Step 1: The "Truth" (null hypothesis)
+  xMu <- mean(x, na.rm = TRUE) # "true" mean
+  
+  # Step 2: randomly select 10 BMIs
+  sampX <- sample(x, size = n, replace = FALSE)
+  
+  # Step 3: Construct a 95% CI
+  t_mod <- t.test(
+    x = sampX,
+    mu = xMu,
+    alternative = "two.sided",
+    conf.level = 1 - alpha
+  )
+  
+  # Step 4: Test if the population mean is contained in the CI
+  CI <- t_mod$conf.int
+  (CI[1] < xMu) && (xMu < CI[2])
+  
+}
+```
+
+3. Compare and contrast rnorm() and MASS::mvrnorm(). How could you make them more consistent?
+```{r}
+# rnorm() returns values drawn from specified normal distribution. mvrnorm() returns values draw from specified multivariable normal distribution. The names are self explanatory, and the argument names are correct and already consistent with the methods.
+```
+
+4. Make a case for why norm_r(), norm_d() etc would be better than rnorm(), dnorm(). Make a case for the opposite.
+```{r}
+# Because norm_r() and norm_d() looks more clear and direct than rnorm() and dnorm().
+```
+
+
+
+###### Conditional execution ############################################################
+```{r}
+if (condition) {
+  # code executed when condition is TRUE
+} else {
+  # code executed when condition is FALSE
+}
+
+has_name <- function(x) {
+  nms <- names(x)
+  if (is.null(nms)) {
+    rep(FALSE, length(x))
+  } else {
+    !is.na(nms) & nms != ""
+  }
+}
+
+if (c(TRUE, FALSE)) {}
+#> Warning in if (c(TRUE, FALSE)) {: the condition has length > 1 and only the
+#> first element will be used
+#> NULL
+
+if (NA) {}
+#> Error in if (NA) {: missing value where TRUE/FALSE needed
+
+identical(0L, 0)
+
+x <- sqrt(2) ^ 2
+x
+x == 2
+x - 2
+
+if (this) {
+  # do that
+} else if (that) {
+  # do something else
+} else {
+  # 
+}
+
+#> function(x, y, op) {
+#>   switch(op,
+#>     plus = x + y,
+#>     minus = x - y,
+#>     times = x * y,
+#>     divide = x / y,
+#>     stop("Unknown op!")
+#>   )
+#> }
+
+# Good
+if (y < 0 && debug) {
+  message("Y is negative")
+}
+
+if (y == 0) {
+  log(x)
+} else {
+  y ^ x
+}
+
+# Bad
+if (y < 0 && debug)
+message("Y is negative")
+
+if (y == 0) {
+  log(x)
+} 
+ else {
+  y ^ x
+}
+
+y <- 10
+x <- if (y < 20) "Too low" else "Too high"
+
+if (y < 20) {
+  x <- "Too low" 
+} else {
+  x <- "Too high"
+}
+```
+###### exercise #########################################################################
+1. What’s the difference between if and ifelse()? Carefully read the help and construct three examples that illustrate the key differences.
+```{r}
+# They are both used to execute conditional statements. But ifelse() is more a shortcut and cleaner version if the conditional statements and return values are simple and short. For example:
+
+# For ifelse
+weight <- 70
+
+ifelse(weight >= 100, 'Overweight', 'Normal')
+
+# For if
+weight <- 70
+
+body <- function(x){
+  if (weight >= 100) {
+    return('Overweight')
+  } else {
+    return('Normal')
+  }
+}
+
+body(weight)
+
+```
+
+2. Write a greeting function that says “good morning”, “good afternoon”, or “good evening”, depending on the time of day. (Hint: use a time argument that defaults to lubridate::now(). That will make it easier to test your function.)
+```{r}
+greeting <- function(){
+  h <- lubridate::hour(lubridate::now())
+  if (dplyr::between(h, 12, 18)){
+    print("Good Afternoon.")
+  } else if(dplyr::between(h, 18, 24)){
+    print("Good Evening")
+  } else {
+    print("Good Morning")
+  }
+}
+
+greeting()
+```
+3. Implement a fizzbuzz function. It takes a single number as input. If the number is divisible by three, it returns “fizz”. If it’s divisible by five it returns “buzz”. If it’s divisible by three and five, it returns “fizzbuzz”. Otherwise, it returns the number. Make sure you first write working code before you create the function.
+```{r}
+fizzbuzz <- function(x){
+  if (x %% 3 == 0 && x %% 5 == 0){
+    print('fizzbuzz')
+  } else if (x %% 3 == 0) {
+    print('fizz')
+  } else if (x %% 5 == 0) {
+    print('buzz')
+  } else {
+    print(x)
+  }
+}
+
+fizzbuzz(10)
+```
+4. How could you use cut() to simplify this set of nested if-else statements?
+
+if (temp <= 0) {
+  "freezing"
+} else if (temp <= 10) {
+  "cold"
+} else if (temp <= 20) {
+  "cool"
+} else if (temp <= 30) {
+  "warm"
+} else {
+  "hot"
+}
+How would you change the call to cut() if I’d used < instead of <=? What is the other chief advantage of cut() for this problem? (Hint: what happens if you have many values in temp?)
+```{r}
+classify_temp <- function(x){
+  cut(x, breaks = c(-Inf,0,10,20,30,Inf),
+      labels = c('freezing','cold','cool','warm','hot'))
+}
+
+# If < is used instead of <=, the arguemnt right = FALSE can be added to indicate the intervales should be closed on the left. The advantagne of using cut() is that the operation can be vectorized.
+
+
+```
+
+5. What happens if you use switch() with numeric values?
+```{r}
+switch(2, 'one', 'two')
+
+# The number i in switch function means return the ith option.
+```
+6. What does this switch() call do? What happens if x is “e”?
+
+switch(x, 
+  a = ,
+  b = "ab",
+  c = ,
+  d = "cd"
+)
+```{r}
+# It returns ab if x is equal to a or b, and returns cd if x is equal to c or d. Since no expression is define what value should be returned if x is e, so when x is "e" it returns nothing.
+```
+
