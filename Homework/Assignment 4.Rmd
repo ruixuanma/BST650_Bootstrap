@@ -1,0 +1,49 @@
+---
+title: "Assignment 4"
+author: "Ruixuan Ma"
+date: "11/4/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+wcgs_df <- read.csv(file = "/Users/maruixuan/Documents/Documents/GitHub/BST650_Bootstrap/wcgs.csv", header = TRUE, stringsAsFactors = FALSE)
+
+bootstrapThe <- function(x, statistic, n = NULL) {
+  
+  if ((is.matrix(x) == TRUE) || (is.data.frame(x) == TRUE)) {
+    x <- na.omit(x)
+    if (is.null(n)) {
+      n <- nrow(x)
+    }
+    if (nrow(x) >= n) { 
+      sampID <- sample(nrow(x), n, replace = TRUE)
+      sampX <- x[sampID]
+    } else {
+      stop("Cannot calculate bootstrap statistic as the 'n' desired is greater than the size of the data.")
+    }
+    
+  } else if ((is.atomic(x) == TRUE) || (is.list(x) == TRUE)) {
+    x <- x[!is.na(x)]
+    if (is.null(n)) {
+      n <- length(x)
+    }
+    if (length(x) >= n) {
+      sampX <- sample(x, n, replace = TRUE)
+    } else {
+      stop("Cannot calculate bootstrap statistic as the 'n' desired is greater than the size of the data.")
+    }
+    
+  } else {
+    stop("Requires matrix, data frame, atomic, or list")
+  }
+  
+  statistic(sampX)
+  
+}
+
+```
+
